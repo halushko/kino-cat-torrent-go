@@ -32,7 +32,7 @@ func GetAllTorrents() {
 			ip := os.Getenv("TORRENT_IP")
 			port, err := strconv.ParseInt(os.Getenv("TORRENT_PORT"), 10, 64)
 			if err != nil {
-				log.Printf("Помилка, порт Transmission задано невірно: %v", err)
+				log.Printf("[GetAllTorrents] Помилка, порт Transmission задано невірно: %v", err)
 				return
 			}
 
@@ -41,21 +41,21 @@ func GetAllTorrents() {
 				HTTPS: false,
 			})
 			if err != nil {
-				log.Fatalf("Ошибка подключения к Transmission: %v", err)
+				log.Printf("[GetAllTorrents] Помилка підключенні до transmission: %v", err)
 				return
 			}
 
 			torrents, err := client.TorrentGetAll(context.Background())
 			if err != nil {
-				log.Fatalf("Ошибка получения списка торрентов: %v", err)
+				log.Printf("[GetAllTorrents] Помилка отримання переліку торентов: %v", err)
 				return
 			}
 
 			for _, torrent := range torrents {
-				log.Printf("ID: %d, Название: %s\n", *torrent.ID, *torrent.Name)
+				log.Printf("ID: %d, Назві: %s\n", *torrent.ID, *torrent.Name)
 			}
 		} else {
-			log.Println("[GetAllTorrents] Помилка: ID користувача чи текст повідомлення порожні")
+			log.Printf("[GetAllTorrents] Помилка: ID користувача чи текст повідомлення порожні")
 		}
 	}
 

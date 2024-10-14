@@ -13,6 +13,7 @@ func main() {
 
 	listeners.GetAllTorrents()
 	listeners.GetMoreCommands()
+	listeners.ExecutePauseTorrent()
 	defer logger_helper.SoftLogClose(logFile)
 	select {}
 }

@@ -2,82 +2,31 @@ package listeners
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/halushko/kino-cat-core-go/nats_helper"
 	"github.com/hekmon/transmissionrpc/v2"
 	"github.com/nats-io/nats.go"
+	"kino-cat-torrent-go/helpers"
 	"log"
 	"math"
-	"os"
-	"strconv"
 	"strings"
 )
 
-type TelegramUserNatsMessage struct {
-	ChatId int64  `json:"chat_id"`
-	Text   string `json:"text"`
-}
-
-type CommandNatsMessage struct {
-	ChatId    int64    `json:"chat_id"`
-	Arguments []string `json:"arguments"`
-}
-
 func GetAllTorrents() {
 	processor := func(msg *nats.Msg) {
-		log.Printf("[GetAllTorrents] Отримано повідомлення з NATS: %s", string(msg.Data))
+		client, inputMessage := helpers.ConnectToTransmission(msg)
+		log.Printf("[GetAllTorrents] Старт отримання переліку торентов")
 
-		var inputMessage CommandNatsMessage
-		if err := json.Unmarshal(msg.Data, &inputMessage); err != nil {
-			log.Printf("[GetAllTorrents] Помилка при розборі повідомлення з NATS: %v", err)
+		torrents, err := client.TorrentGetAll(context.Background())
+		if err != nil {
+			log.Printf("[GetAllTorrents] Помилка отримання переліку торентов: %v", err)
 			return
 		}
 
-		log.Printf("[GetAllTorrents] Парсинг повідомлення: chatID = %d, arguments = %s", inputMessage.ChatId, inputMessage.Arguments)
+		log.Printf("[GetAllTorrents] Торенти отримано")
 
-		if inputMessage.ChatId != 0 {
-			ip := os.Getenv("TORRENT_IP")
-			port, err := strconv.ParseInt(os.Getenv("TORRENT_PORT"), 10, 64)
-			if err != nil {
-				log.Printf("[GetAllTorrents] Помилка, порт Transmission задано невірно: %v", err)
-				return
-			}
-
-			client, err := transmissionrpc.New(ip, "", "", &transmissionrpc.AdvancedConfig{
-				Port:  uint16(port),
-				HTTPS: false,
-			})
-			if err != nil {
-				log.Printf("[GetAllTorrents] Помилка підключенні до transmission: %v", err)
-				return
-			}
-			log.Printf("[GetAllTorrents] Старт отримання переліку торентов")
-
-			torrents, err := client.TorrentGetAll(context.Background())
-			if err != nil {
-				log.Printf("[GetAllTorrents] Помилка отримання переліку торентов: %v", err)
-				return
-			}
-
-			log.Printf("[GetAllTorrents] Торенти отримано")
-
-			queue := "TELEGRAM_OUTPUT_TEXT_QUEUE"
-			answer := generateAnswerList(torrents)
-			log.Printf("[GetAllTorrents] Answer:%s", answer)
-			if request, errMarshal := json.Marshal(TelegramUserNatsMessage{
-				ChatId: inputMessage.ChatId,
-				Text:   answer,
-			}); errMarshal == nil {
-				if errPublish := nats_helper.PublishToNATS(queue, request); errPublish != nil {
-					log.Printf("[GetAllTorrents] ERROR in publish to %s:%s", queue, errPublish)
-				}
-			} else {
-				log.Printf("[GetAllTorrents] ERROR in publish to %s:%s", queue, errMarshal)
-			}
-		} else {
-			log.Printf("[GetAllTorrents] Помилка: ID користувача порожній")
-		}
+		answer := generateAnswerList(torrents)
+		helpers.SendAnswer(inputMessage.ChatId, answer)
 	}
 
 	listener := &nats_helper.NatsListener{

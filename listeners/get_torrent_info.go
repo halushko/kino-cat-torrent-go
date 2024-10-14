@@ -51,15 +51,14 @@ func generateAnswerInfo(torrent transmissionrpc.Torrent) string {
 	totalSize := float64(*torrent.TotalSize)
 	done := *torrent.PercentDone
 	uploadedEver := *torrent.UploadedEver
-	lastActivityDate := *torrent.ActivityDate
 
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("Торент %s\n/\n", *torrent.Name))
-	sb.WriteString(fmt.Sprintf("Маємо: %f Gb", math.Round(totalSize/1000000.0)/1000.0))
-	sb.WriteString(fmt.Sprintf(" (%F%%)\n", done))
-	sb.WriteString(fmt.Sprintf("Відвантажено: %f Gb", math.Round(float64(uploadedEver)/1000000.0)/1000.0))
-	sb.WriteString(fmt.Sprintf(" (%f%%)\n", (10*float64(uploadedEver)/totalSize)/10.0))
-	sb.WriteString(fmt.Sprintf("Активність: %s\n", lastActivityDate))
+	sb.WriteString(fmt.Sprintf("Маємо: %.2f Gb", math.Round(totalSize/1000000.0)/1000.0))
+	sb.WriteString(fmt.Sprintf(" (%.0f%%)\n", done*100))
+	sb.WriteString(fmt.Sprintf("Відвантажено: %.2f Gb", math.Round(float64(uploadedEver)/1000000.0)/1000.0))
+	sb.WriteString(fmt.Sprintf(" (%.0f%%)\n", float64(uploadedEver)/totalSize))
+	sb.WriteString(fmt.Sprintf("Активність: %s\n", torrent.ActivityDate.Format(`02-01-2006 15:04:05`)))
 	if *torrent.Error != 0 {
 		sb.WriteString(fmt.Sprintf("Помилка: %s\n", *torrent.ErrorString))
 	}

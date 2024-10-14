@@ -26,9 +26,9 @@ func ExecuteResumeTorrent() {
 
 		answer := ""
 		if err != nil {
-			answer = fmt.Sprintf("Торент з ID=%d не зупинено", id)
+			answer = fmt.Sprintf("Торент з ID=%d не поновлено", id)
 		} else {
-			answer = fmt.Sprintf("Торент з ID=%d зупинено", id)
+			answer = fmt.Sprintf("Торент з ID=%d поновлено", id)
 		}
 
 		helpers.SendAnswer(inputMessage.ChatId, answer)
@@ -38,5 +38,5 @@ func ExecuteResumeTorrent() {
 		Handler: processor,
 	}
 
-	nats_helper.StartNatsListener("EXECUTE_TORRENT_COMMAND_PAUSE_TORRENT", listener)
+	nats_helper.StartNatsListener("EXECUTE_TORRENT_COMMAND_RESUME_TORRENT", listener)
 }

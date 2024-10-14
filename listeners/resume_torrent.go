@@ -22,7 +22,7 @@ func ExecuteResumeTorrent() {
 			return
 		}
 
-		err = client.TorrentStopIDs(context.Background(), []int64{id})
+		err = client.TorrentStartIDs(context.Background(), []int64{id})
 
 		answer := ""
 		if err != nil {

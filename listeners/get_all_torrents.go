@@ -38,7 +38,6 @@ func GetAllTorrents() {
 
 func generateAnswerList(torrents []transmissionrpc.Torrent) string {
 	var line strings.Builder
-	line.WriteString("||")
 
 	for _, torrent := range torrents {
 		line.WriteString(
@@ -100,7 +99,7 @@ func getStatusIcon(torrent transmissionrpc.Torrent) string {
 	case transmissionrpc.TorrentStatusSeedWait:
 		return "⏲⬆️"
 	case transmissionrpc.TorrentStatusSeed:
-		return "♻️"
+		return "⬆️"
 	case transmissionrpc.TorrentStatusIsolated:
 		return "🈲"
 	default:

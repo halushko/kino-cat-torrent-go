@@ -44,12 +44,15 @@ func GetAllTorrents() {
 				log.Printf("[GetAllTorrents] Помилка підключенні до transmission: %v", err)
 				return
 			}
+			log.Printf("[GetAllTorrents] Старт отримання переліку торентов")
 
 			torrents, err := client.TorrentGetAll(context.Background())
 			if err != nil {
 				log.Printf("[GetAllTorrents] Помилка отримання переліку торентов: %v", err)
 				return
 			}
+
+			log.Printf("[GetAllTorrents] Торенти отримано")
 
 			for _, torrent := range torrents {
 				log.Printf("ID: %d, Назві: %s\n", *torrent.ID, *torrent.Name)

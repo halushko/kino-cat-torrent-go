@@ -40,7 +40,7 @@ func GetTorrentInfo() {
 		Handler: processor,
 	}
 
-	nats_helper.StartNatsListener("EXECUTE_TORRENT_COMMAND_PAUSE_TORRENT", listener)
+	nats_helper.StartNatsListener("EXECUTE_TORRENT_COMMAND_INFO", listener)
 }
 
 func generateAnswerInfo(torrent transmissionrpc.Torrent) string {

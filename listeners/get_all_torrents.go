@@ -63,7 +63,7 @@ func GetAllTorrents() {
 			log.Printf("[GetAllTorrents] Торенти отримано")
 
 			queue := "TELEGRAM_OUTPUT_TEXT_QUEUE"
-			answer := generateAnswer(torrents)
+			answer := generateAnswerList(torrents)
 			log.Printf("[GetAllTorrents] Answer:%s", answer)
 			if request, errMarshal := json.Marshal(TelegramUserNatsMessage{
 				ChatId: inputMessage.ChatId,
@@ -76,7 +76,7 @@ func GetAllTorrents() {
 				log.Printf("[GetAllTorrents] ERROR in publish to %s:%s", queue, errMarshal)
 			}
 		} else {
-			log.Printf("[GetAllTorrents] Помилка: ID користувача чи текст повідомлення порожні")
+			log.Printf("[GetAllTorrents] Помилка: ID користувача порожній")
 		}
 	}
 
@@ -87,7 +87,7 @@ func GetAllTorrents() {
 	nats_helper.StartNatsListener("EXECUTE_TORRENT_COMMAND_LIST", listener)
 }
 
-func generateAnswer(torrents []transmissionrpc.Torrent) string {
+func generateAnswerList(torrents []transmissionrpc.Torrent) string {
 	var line strings.Builder
 	line.WriteString("||")
 
@@ -96,8 +96,8 @@ func generateAnswer(torrents []transmissionrpc.Torrent) string {
 			fmt.Sprintf("%s %s\n%s %s\n%s %s\n",
 				getStatusIcon(torrent), *torrent.Name,
 				getProgressBar(torrent), getGigabytesLeft(torrent),
-				fmt.Sprintf("%s%s%s%d", "/more_", "", "_", int(*torrent.ID)),
-				fmt.Sprintf("%s%s%s%d", "/files_", "", "_", int(*torrent.ID)),
+				fmt.Sprintf("%s%s%s%d", "/more_", "", "", int(*torrent.ID)),
+				fmt.Sprintf("%s%s%s%d", "/files_", "", "", int(*torrent.ID)),
 			),
 		)
 	}

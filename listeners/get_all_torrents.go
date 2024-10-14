@@ -14,6 +14,11 @@ import (
 	"strings"
 )
 
+type TelegramUserNatsMessage struct {
+	ChatId int64  `json:"chat_id"`
+	Text   string `json:"text"`
+}
+
 type CommandNatsMessage struct {
 	ChatId    int64    `json:"chat_id"`
 	Arguments []string `json:"arguments"`
@@ -57,9 +62,18 @@ func GetAllTorrents() {
 
 			log.Printf("[GetAllTorrents] Торенти отримано")
 
-			generateAnswer(torrents)
-			for _, torrent := range torrents {
-				log.Printf("ID: %d, Назві: %s\n", *torrent.ID, *torrent.Name)
+			queue := "TELEGRAM_OUTPUT_TEXT_QUEUE"
+			answer := generateAnswer(torrents)
+			log.Printf("[GetAllTorrents] Answer:%s", answer)
+			if request, errMarshal := json.Marshal(TelegramUserNatsMessage{
+				ChatId: inputMessage.ChatId,
+				Text:   answer,
+			}); errMarshal == nil {
+				if errPublish := nats_helper.PublishToNATS(queue, request); errPublish != nil {
+					log.Printf("[GetAllTorrents] ERROR in publish to %s:%s", queue, errPublish)
+				}
+			} else {
+				log.Printf("[GetAllTorrents] ERROR in publish to %s:%s", queue, errMarshal)
 			}
 		} else {
 			log.Printf("[GetAllTorrents] Помилка: ID користувача чи текст повідомлення порожні")

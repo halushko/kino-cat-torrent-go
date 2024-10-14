@@ -17,7 +17,7 @@ func GetTorrentInfo() {
 	processor := func(msg *nats.Msg) {
 		client, inputMessage := helpers.ConnectToTransmission(msg)
 
-		log.Printf("[GetTorrentInfo] Старт зупинки торенту")
+		log.Printf("[GetTorrentInfo] Старт отримання інформації по торенту")
 		strId := inputMessage.Arguments[len(inputMessage.Arguments)-1]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
@@ -26,7 +26,11 @@ func GetTorrentInfo() {
 		}
 
 		answer := ""
-		torrents, err := client.TorrentGet(context.Background(), []string{}, []int64{id})
+		torrents, err := client.TorrentGet(
+			context.Background(),
+			[]string{"totalSize", "percentDone", "uploadedEver", "activityDate", "name", "error", "errorString", "comment", "dateCreated", "startDate"},
+			[]int64{id},
+		)
 		if err != nil {
 			answer = fmt.Sprintf("Інформацію по торенту з ID=%d не можливо отримати", id)
 		} else {

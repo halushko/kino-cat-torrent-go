@@ -1,0 +1,45 @@
+name: Delete Docker images on merge to developer
+
+on:
+  pull_request:
+    branches:
+      - developer
+    types:
+      - closed
+
+jobs:
+  delete_docker_images:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Extract branch name
+        id: extract_branch
+        run: |
+          BRANCH_NAME=beta-$(echo "${{ github.event.pull_request.head.ref }}" | sed 's/[^a-zA-Z0-9-]//g')
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "Branch being merged: $BRANCH_NAME"
+
+      - name: Get list of Docker tags to delete
+        id: list_tags
+        run: |
+          REPO_NAME="${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go"
+          BRANCH_NAME=${{ env.BRANCH_NAME }}
+          
+          curl -s -u "${{ secrets.DOCKER_HUB_USERNAME }}:${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" \
+            "https://hub.docker.com/v2/repositories/$REPO_NAME/tags/?page_size=100" \
+            | jq -r --arg BRANCH_NAME "$BRANCH_NAME" '.results[] | select(.name | test("^" + $BRANCH_NAME + "-[0-9]{14}$")) | .name' > tags_to_delete.txt
+          
+          cat tags_to_delete.txt
+
+      - name: Delete Docker images
+        run: |
+          REPO_NAME="${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go"
+          while read -r TAG; do
+            echo "Deleting tag: $TAG"
+            curl -s -u "${{ secrets.DOCKER_HUB_USERNAME }}:${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" \
+              -X DELETE "https://hub.docker.com/v2/repositories/$REPO_NAME/tags/$TAG/"
+          done < tags_to_delete.txt

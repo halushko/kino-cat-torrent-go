@@ -57,15 +57,15 @@ func ConnectToTransmission(msg *nats.Msg) (*transmissionrpc.Client, CommandNatsM
 }
 
 func SendAnswer(chatId int64, message string) {
-	log.Printf("[GetAllTorrents] Answer:%s", message)
+	log.Printf("[SendAnswer] Answer:%s", message)
 	if request, errMarshal := json.Marshal(TelegramUserNatsMessage{
 		ChatId: chatId,
 		Text:   message,
 	}); errMarshal == nil {
 		if errPublish := nats_helper.PublishToNATS(OutputQueue, request); errPublish != nil {
-			log.Printf("[GetAllTorrents] ERROR in publish to %s:%s", OutputQueue, errPublish)
+			log.Printf("[SendAnswer] ERROR in publish to %s:%s", OutputQueue, errPublish)
 		}
 	} else {
-		log.Printf("[GetAllTorrents] ERROR in publish to %s:%s", OutputQueue, errMarshal)
+		log.Printf("[SendAnswer] ERROR in publish to %s:%s", OutputQueue, errMarshal)
 	}
 }

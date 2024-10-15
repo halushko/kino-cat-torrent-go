@@ -65,8 +65,6 @@ func getInfoAboutFiles(torrent transmissionrpc.Torrent) string {
 		}
 		sb.WriteString(fmt.Sprintf("%s\n", name))
 		sb.WriteString(fmt.Sprintf("%s (%s)\n", pb, percent))
-		sb.WriteString(fmt.Sprintf("BytesCompleted: %d", file.BytesCompleted))
-		sb.WriteString(fmt.Sprintf("Length: %d", file.Length))
 	}
 	return sb.String()
 }

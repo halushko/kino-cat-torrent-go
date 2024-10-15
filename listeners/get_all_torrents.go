@@ -20,25 +20,21 @@ func GetAllTorrents() {
 			return text
 		}
 		log.Printf("[GetAllTorrents] Торенти для сзовища %s отримано", key)
-		answer := generateAnswerList(torrents)
+		answer := generateAnswerList(args[0], args[1], torrents)
 		return answer
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_LIST", processor)
 }
 
-func generateAnswerList(torrents []transmissionrpc.Torrent) string {
+func generateAnswerList(server string, id string, torrents []transmissionrpc.Torrent) string {
 	var line strings.Builder
 
 	for _, torrent := range torrents {
-		line.WriteString(
-			fmt.Sprintf("%s %s\n%s %s\n%s %s\n",
-				getStatusIcon(torrent), *torrent.Name,
-				getProgressBar(torrent), getGigabytesLeft(torrent),
-				fmt.Sprintf("%s%s%s%d", "/more_", "", "", int(*torrent.ID)),
-				fmt.Sprintf("%s%s%s%d", "/files_", "", "", int(*torrent.ID)),
-			),
-		)
+		line.WriteString(fmt.Sprintf("%s %s\n", getStatusIcon(torrent), *torrent.Name))
+		line.WriteString(fmt.Sprintf("%s %s\n", getProgressBar(torrent), getGigabytesLeft(torrent)))
+		line.WriteString(fmt.Sprintf("/more_%s_%s ", server, id))
+		line.WriteString(fmt.Sprintf("/files_%s_%s\n", server, id))
 	}
 	return line.String()
 }

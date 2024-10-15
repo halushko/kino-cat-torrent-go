@@ -17,6 +17,7 @@ func main() {
 	listeners.AskDeleteTorrent()
 	listeners.RemoveJustTorrent()
 	listeners.RemoveWithFiles()
+	listeners.GetTorrentsByName()
 
 	select {}
 }

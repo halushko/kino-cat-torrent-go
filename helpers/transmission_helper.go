@@ -7,6 +7,7 @@ import (
 	"github.com/hekmon/transmissionrpc/v2"
 	"github.com/nats-io/nats.go"
 	"log"
+	"sort"
 	"strconv"
 )
 
@@ -24,9 +25,14 @@ const OutputQueue = "TELEGRAM_OUTPUT_TEXT_QUEUE"
 
 func executeForServers(msg *nats.Msg, f func(key string, args []string, client *transmissionrpc.Client) string) {
 	clients, inputMessage := connectToTransmission(msg)
-	for key, client := range clients {
+	keys := make([]string, 0)
+	for key := range clients {
+		keys = append(keys, key)
+	}
+	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
+	for _, key := range keys {
 		log.Printf("[ExecuteForServers] Старт роботи зі сховищем %s", key)
-		SendAnswer(inputMessage.ChatId, f(key, inputMessage.Arguments, client))
+		SendAnswer(inputMessage.ChatId, f(key, inputMessage.Arguments, clients[key]))
 	}
 }
 

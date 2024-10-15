@@ -7,6 +7,7 @@ import (
 	"kino-cat-torrent-go/helpers"
 	"log"
 	"math"
+	"sort"
 	"strings"
 )
 
@@ -19,6 +20,7 @@ func GetAllTorrents() {
 			log.Printf(text)
 			return text
 		}
+		sort.Slice(torrents, func(i, j int) bool { return *torrents[i].ID < *torrents[j].ID })
 		log.Printf("[GetAllTorrents] Торенти для сзовища %s отримано", key)
 		answer := generateAnswerList(key, torrents)
 		return answer
@@ -30,7 +32,7 @@ func GetAllTorrents() {
 func generateAnswerList(server string, torrents []transmissionrpc.Torrent) string {
 	var line strings.Builder
 	for _, torrent := range torrents {
-		id := int(*torrent.ID)
+		id := *torrent.ID
 		line.WriteString(fmt.Sprintf("%s %s\n", getStatusIcon(torrent), *torrent.Name))
 		line.WriteString(fmt.Sprintf("%s %s\n", getProgressBar(torrent), getGigabytesLeft(torrent)))
 		line.WriteString(fmt.Sprintf("/more_%s_%s ", server, id))

@@ -3,9 +3,7 @@ package listeners
 import (
 	"context"
 	"fmt"
-	"github.com/halushko/kino-cat-core-go/nats_helper"
 	"github.com/hekmon/transmissionrpc/v2"
-	"github.com/nats-io/nats.go"
 	"kino-cat-torrent-go/helpers"
 	"log"
 	"math"
@@ -14,15 +12,14 @@ import (
 )
 
 func GetTorrentInfo() {
-	processor := func(msg *nats.Msg) {
-		client, inputMessage := helpers.ConnectToTransmission(msg)
-
+	processor := func(key string, args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetTorrentInfo] Старт отримання інформації по торенту")
-		strId := inputMessage.Arguments[len(inputMessage.Arguments)-1]
+		strId := args[len(args)-1]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
-			log.Printf("[GetTorrentInfo] ID торента \"%s\" не валідний: %v", strId, err)
-			return
+			text := fmt.Sprintf("[GetTorrentInfo] ID торента \"%s\" не валідний: %v", strId, err)
+			log.Printf(text)
+			return text
 		}
 
 		answer := ""
@@ -36,15 +33,10 @@ func GetTorrentInfo() {
 		} else {
 			answer = generateAnswerInfo(torrents[0])
 		}
-
-		helpers.SendAnswer(inputMessage.ChatId, answer)
+		return answer
 	}
 
-	listener := &nats_helper.NatsListener{
-		Handler: processor,
-	}
-
-	nats_helper.StartNatsListener("EXECUTE_TORRENT_COMMAND_INFO", listener)
+	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_INFO", processor)
 }
 
 func generateAnswerInfo(torrent transmissionrpc.Torrent) string {

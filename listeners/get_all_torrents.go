@@ -3,9 +3,7 @@ package listeners
 import (
 	"context"
 	"fmt"
-	"github.com/halushko/kino-cat-core-go/nats_helper"
 	"github.com/hekmon/transmissionrpc/v2"
-	"github.com/nats-io/nats.go"
 	"kino-cat-torrent-go/helpers"
 	"log"
 	"math"
@@ -13,27 +11,20 @@ import (
 )
 
 func GetAllTorrents() {
-	processor := func(msg *nats.Msg) {
-		client, inputMessage := helpers.ConnectToTransmission(msg)
-		log.Printf("[GetAllTorrents] Старт отримання переліку торентов")
-
+	processor := func(key string, args []string, client *transmissionrpc.Client) string {
+		log.Printf("[GetAllTorrents] Торенти отримано")
 		torrents, err := client.TorrentGetAll(context.Background())
 		if err != nil {
-			log.Printf("[GetAllTorrents] Помилка отримання переліку торентов: %v", err)
-			return
+			text := fmt.Sprintf("[GetAllTorrents] Помилка отримання переліку торентов: %v", err)
+			log.Printf(text)
+			return text
 		}
-
-		log.Printf("[GetAllTorrents] Торенти отримано")
-
+		log.Printf("[GetAllTorrents] Торенти для сзовища %s отримано", key)
 		answer := generateAnswerList(torrents)
-		helpers.SendAnswer(inputMessage.ChatId, answer)
+		return answer
 	}
 
-	listener := &nats_helper.NatsListener{
-		Handler: processor,
-	}
-
-	nats_helper.StartNatsListener("EXECUTE_TORRENT_COMMAND_LIST", listener)
+	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_LIST", processor)
 }
 
 func generateAnswerList(torrents []transmissionrpc.Torrent) string {

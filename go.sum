@@ -1,5 +1,13 @@
 github.com/halushko/kino-cat-core-go v0.0.0-20241014165750-3e9a38ec7901 h1:Pudb+p2p91mRIsvqHtQ3M2NBp2K8a+44sLA/1gl3vow=
 github.com/halushko/kino-cat-core-go v0.0.0-20241014165750-3e9a38ec7901/go.mod h1:5nB9PMvPVXZBzd/bYtVNebhcL7W2VwU3Z6BI92reHuU=
+github.com/halushko/kino-cat-core-go v0.0.0-20241015073540-5a728db115cb h1:6dFwhjRR0B3h10hlwXlx8hbD4ganzP5oJontRSsE3eI=
+github.com/halushko/kino-cat-core-go v0.0.0-20241015073540-5a728db115cb/go.mod h1:5nB9PMvPVXZBzd/bYtVNebhcL7W2VwU3Z6BI92reHuU=
+github.com/halushko/kino-cat-core-go v0.0.0-20241015092604-8a8b8742b0fe h1:VEiBLqLxRmgQ0GQHkR1EF6f3IbspQ3HkskJ4Dn8yR1s=
+github.com/halushko/kino-cat-core-go v0.0.0-20241015092604-8a8b8742b0fe/go.mod h1:5nB9PMvPVXZBzd/bYtVNebhcL7W2VwU3Z6BI92reHuU=
+github.com/halushko/kino-cat-core-go v0.0.0-20241015102127-94090ce804d3 h1:co7XL+jTQtZ5rdDJqPhA2yNoql4+bS80K0s+oqL6Cwo=
+github.com/halushko/kino-cat-core-go v0.0.0-20241015102127-94090ce804d3/go.mod h1:5nB9PMvPVXZBzd/bYtVNebhcL7W2VwU3Z6BI92reHuU=
+github.com/halushko/kino-cat-core-go v0.0.0-20241015102957-096e5635e0b1 h1:rxtJQ3rDcblNDHA8uc9O1jaT13Mil1Q1RoOhiQ683k8=
+github.com/halushko/kino-cat-core-go v0.0.0-20241015102957-096e5635e0b1/go.mod h1:5nB9PMvPVXZBzd/bYtVNebhcL7W2VwU3Z6BI92reHuU=
 github.com/hashicorp/go-cleanhttp v0.5.2 h1:035FKYIWjmULyFRBKPs8TBQoi0x6d9G4xc9neXJWAZQ=
 github.com/hashicorp/go-cleanhttp v0.5.2/go.mod h1:kO/YDlP8L1346E6Sodw+PrpBSV4/SoxCXGY6BqNFT48=
 github.com/hekmon/cunits/v2 v2.1.0 h1:k6wIjc4PlacNOHwKEMBgWV2/c8jyD4eRMs5mR1BBhI0=

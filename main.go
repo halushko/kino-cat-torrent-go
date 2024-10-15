@@ -3,13 +3,11 @@ package main
 import (
 	"github.com/halushko/kino-cat-core-go/logger_helper"
 	"kino-cat-torrent-go/listeners"
-	"log"
 )
 
 //goland:noinspection ALL
 func main() {
-	logFile := logger_helper.SoftPrepareLogFile()
-	log.SetOutput(logFile)
+	logger_helper.SoftPrepareLogFile()
 
 	listeners.GetAllTorrents()
 	listeners.GetMoreCommands()
@@ -17,6 +15,5 @@ func main() {
 	listeners.ExecuteResumeTorrent()
 	listeners.GetTorrentInfo()
 
-	defer logger_helper.SoftLogClose(logFile)
 	select {}
 }

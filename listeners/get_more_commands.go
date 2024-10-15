@@ -3,30 +3,28 @@ package listeners
 import (
 	"context"
 	"fmt"
-	"github.com/halushko/kino-cat-core-go/nats_helper"
 	"github.com/hekmon/transmissionrpc/v2"
-	"github.com/nats-io/nats.go"
 	"kino-cat-torrent-go/helpers"
 	"log"
 	"strconv"
 )
 
 func GetMoreCommands() {
-	processor := func(msg *nats.Msg) {
-		client, inputMessage := helpers.ConnectToTransmission(msg)
-
+	processor := func(key string, args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetMoreCommands] Старт отримання інформації по торенту")
-		strId := inputMessage.Arguments[len(inputMessage.Arguments)-1]
+		strId := args[len(args)-1]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
-			log.Printf("[GetMoreCommands] ID торента \"%s\" не валідний: %v", strId, err)
-			return
+			text := fmt.Sprintf("[GetMoreCommands] ID торента \"%s\" не валідний: %v", strId, err)
+			log.Printf(text)
+			return text
 		}
 
 		torrents, err := client.TorrentGet(context.Background(), []string{"name", "id", "status"}, []int64{id})
 		if err != nil {
-			log.Printf("[GetMoreCommands] Помилка отримання переліку торентов: %v", err)
-			return
+			text := fmt.Sprintf("[GetMoreCommands] Помилка отримання переліку торентов: %v", err)
+			log.Printf(text)
+			return text
 		}
 		answer := ""
 		if len(torrents) == 1 {
@@ -36,14 +34,10 @@ func GetMoreCommands() {
 			log.Printf("[GetMoreCommands] Інформації про торент \"%d\" немає", id)
 			answer = fmt.Sprintf("Нажаль для торента з ID=%d не можна отримати Ім'я", id)
 		}
-		helpers.SendAnswer(inputMessage.ChatId, answer)
+		return answer
 	}
 
-	listener := &nats_helper.NatsListener{
-		Handler: processor,
-	}
-
-	nats_helper.StartNatsListener("EXECUTE_TORRENT_COMMAND_SHOW_COMMANDS", listener)
+	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_SHOW_COMMANDS", processor)
 }
 
 func generateAnswerMore(torrent transmissionrpc.Torrent) string {

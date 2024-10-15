@@ -73,7 +73,7 @@ func getGigabytesLeft(torrent transmissionrpc.Torrent) string {
 
 	return fmt.Sprintf("%.0f %% (%.2f Gb залиш)\n%s\n%s", percentDone, remainingSize,
 		fmt.Sprintf("BytesCompleted: %f", torrent.TotalSize.GB()),
-		fmt.Sprintf("Length: %f", torrent.PercentDone),
+		fmt.Sprintf("Length: %f", *torrent.PercentDone),
 	)
 }
 

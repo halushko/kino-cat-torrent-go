@@ -46,12 +46,16 @@ func getInfoAboutFiles(torrent transmissionrpc.Torrent) string {
 	sort.Slice(files, func(i, j int) bool { return files[i].Name < files[j].Name })
 
 	var sb strings.Builder
-	sb.WriteString(fmt.Sprintf("%s\n/", *torrent.Name))
+	sb.WriteString(fmt.Sprintf("%s\n/\n", *torrent.Name))
 
 	for _, file := range files {
 		done := float64(file.BytesCompleted) / float64(file.Length)
 		pb := getProgressBar(done, 10)
 		name := file.Name
+
+		if strings.HasPrefix(name, *torrent.Name+"/") {
+			name = strings.TrimPrefix(name, *torrent.Name+"/")
+		}
 		percent := ""
 		if done >= 1 {
 			percent = "заверш"

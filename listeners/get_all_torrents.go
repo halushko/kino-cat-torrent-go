@@ -34,16 +34,16 @@ func generateAnswerList(server string, torrents []transmissionrpc.Torrent) strin
 	for _, torrent := range torrents {
 		id := *torrent.ID
 		line.WriteString(fmt.Sprintf("%s %s\n", getStatusIcon(torrent), *torrent.Name))
-		line.WriteString(fmt.Sprintf("%s %s\n", getProgressBar(torrent), getGigabytesLeft(torrent)))
+		line.WriteString(fmt.Sprintf("%s %s\n", getProgressBar(*torrent.PercentDone, 20), getGigabytesLeft(torrent)))
 		line.WriteString(fmt.Sprintf("/more_%s_%d ", server, id))
 		line.WriteString(fmt.Sprintf("/files_%s_%d\n", server, id))
 	}
 	return line.String()
 }
 
-func getProgressBar(torrent transmissionrpc.Torrent) string {
-	blocks := 20
-	blackBlocks := int(*torrent.PercentDone * float64(blocks))
+func getProgressBar(percentDone float64, blocks int) string {
+
+	blackBlocks := int(percentDone * float64(blocks))
 	var line strings.Builder
 	line.WriteString("||")
 	for i := 0; i < blackBlocks; i++ {
@@ -57,6 +57,7 @@ func getProgressBar(torrent transmissionrpc.Torrent) string {
 			line.WriteString("░")
 		}
 	}
+	line.WriteString("||")
 	return line.String()
 }
 

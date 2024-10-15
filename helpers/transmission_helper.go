@@ -20,12 +20,6 @@ type CommandNatsMessage struct {
 	Arguments []string `json:"arguments"`
 }
 
-//type CommandExecutorProcessor func(*nats.Msg) string
-//
-//type CommandExecutor struct {
-//	Processor CommandExecutorProcessor
-//}
-
 const OutputQueue = "TELEGRAM_OUTPUT_TEXT_QUEUE"
 
 func executeForServers(msg *nats.Msg, f func(key string, args []string, client *transmissionrpc.Client) string) {

@@ -7,15 +7,15 @@ import (
 	"kino-cat-torrent-go/helpers"
 	"log"
 	"strconv"
+	"strings"
 )
 
 func GetMoreCommands() {
 	processor := func(key string, args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetMoreCommands] Старт отримання інформації по торенту")
-		strId := args[len(args)-1]
-		id, err := strconv.ParseInt(strId, 10, 64)
+		id, err := strconv.ParseInt(args[1], 10, 64)
 		if err != nil {
-			text := fmt.Sprintf("[GetMoreCommands] ID торента \"%s\" не валідний: %v", strId, err)
+			text := fmt.Sprintf("[GetMoreCommands] ID торента \"%s_%s\" не валідний: %v", args[0], args[1], err)
 			log.Printf(text)
 			return text
 		}
@@ -29,7 +29,7 @@ func GetMoreCommands() {
 		answer := ""
 		if len(torrents) == 1 {
 			log.Printf("[GetMoreCommands] Інформацію про торент \"%d\" отримано", id)
-			answer = generateAnswerMore(torrents[0])
+			answer = generateAnswerMore(torrents[0], args[0], args[1])
 		} else {
 			log.Printf("[GetMoreCommands] Інформації про торент \"%d\" немає", id)
 			answer = fmt.Sprintf("Нажаль для торента з ID=%d не можна отримати Ім'я", id)
@@ -40,12 +40,12 @@ func GetMoreCommands() {
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_SHOW_COMMANDS", processor)
 }
 
-func generateAnswerMore(torrent transmissionrpc.Torrent) string {
-	return fmt.Sprintf("%s\n%s\n%s\n%s\n%s",
-		*torrent.Name,
-		fmt.Sprintf("%s%s%s%d", "/pause_", "", "", *torrent.ID),
-		fmt.Sprintf("%s%s%s%d", "/resume_", "", "", *torrent.ID),
-		fmt.Sprintf("%s%s%s%d", "/info_", "", "", *torrent.ID),
-		fmt.Sprintf("%s%s%s%d", "/remove_", "", "", *torrent.ID),
-	)
+func generateAnswerMore(torrent transmissionrpc.Torrent, server string, id string) string {
+	var line strings.Builder
+	line.WriteString(*torrent.Name + "\n")
+	line.WriteString(fmt.Sprintf("/pause_%s_%s\n", server, id))
+	line.WriteString(fmt.Sprintf("/resume_%s_%s\n", server, id))
+	line.WriteString(fmt.Sprintf("/info_%s_%s\n", server, id))
+	line.WriteString(fmt.Sprintf("/remove_%s_%s", server, id))
+	return line.String()
 }

@@ -69,12 +69,9 @@ func getGigabytesLeft(torrent transmissionrpc.Torrent) string {
 
 	percentDone := math.Round(done * 100)
 	totalSize := float64(torrent.TotalSize.GB())
-	remainingSize := math.Round((totalSize*(1.0-done))*100.0) / 100.0
+	remainingSize := totalSize * (1.0 - done)
 
-	return fmt.Sprintf("%.0f %% (%.2f Gb залиш)\n%s\n%s", percentDone, remainingSize,
-		fmt.Sprintf("BytesCompleted: %f", torrent.TotalSize.GB()),
-		fmt.Sprintf("Length: %f", *torrent.PercentDone),
-	)
+	return fmt.Sprintf("%.0f %% (%.2f Gb залиш)", percentDone, remainingSize)
 }
 
 func getStatusIcon(torrent transmissionrpc.Torrent) string {

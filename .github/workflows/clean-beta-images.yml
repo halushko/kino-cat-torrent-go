@@ -3,7 +3,7 @@ name: Delete Docker images on merge to developer
 on:
   pull_request:
     branches:
-      - developer
+      - development
     types:
       - closed
 

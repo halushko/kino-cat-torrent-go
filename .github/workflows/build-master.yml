@@ -1,14 +1,12 @@
-name: Build and Push Docker Image for MASTER branch
+name: Build and Push Docker Image for Tag
 
 on:
   push:
-    branches:
-      - master
     tags:
       - '*'
+
 jobs:
   publish:
-    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
 
     steps:
@@ -38,10 +36,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:beta-latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:alpha
-            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:${{ github.ref_name }}
-            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/your-image-name:${{ github.ref_name }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/your-image-name:latest
 
       - name: Complete
         run: |

@@ -26,15 +26,15 @@ jobs:
       - name: Extract branch name
         id: extract_branch
         run: |
-          BRANCH_NAME=beta-$(echo "${{ github.event.pull_request.head.ref }}" | sed 's/[^a-zA-Z0-9-]//g')
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-          echo "Branch being merged: $BRANCH_NAME"
+          BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | sed 's/[\/]/-/g')
+          echo "SANITIZED_BRANCH_NAME=beta-${BRANCH_NAME}" >> $GITHUB_ENV
+          echo "Branch being merged: beta-${BRANCH_NAME}"
 
       - name: Get list of Docker tags to delete
         id: list_tags
         run: |
           REPO_NAME="${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go"
-          BRANCH_NAME=${{ env.BRANCH_NAME }}
+          BRANCH_NAME=${{ env.SANITIZED_BRANCH_NAME }}
           DOCKER_TOKEN=${{ env.DOCKER_TOKEN }}
 
           curl -s -H "Authorization: JWT $DOCKER_TOKEN" \

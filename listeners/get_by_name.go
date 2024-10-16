@@ -24,12 +24,18 @@ func GetTorrentsByName() {
 		searchQuery := strings.Join(args, "")
 		searchQuery = strings.ReplaceAll(searchQuery, " ", "")
 		searchQuery = strings.ReplaceAll(searchQuery, "_", "")
+		searchQuery = strings.ReplaceAll(searchQuery, "-", "")
+		searchQuery = strings.ReplaceAll(searchQuery, "/", "")
+		searchQuery = strings.ReplaceAll(searchQuery, "|", "")
 		searchQuery = strings.ToUpper(searchQuery)
 
 		for i := 0; i < len(torrents); i++ {
 			if torrents[i].Name != nil {
 				modifiedName := strings.ReplaceAll(*torrents[i].Name, " ", "")
 				modifiedName = strings.ReplaceAll(modifiedName, "_", "")
+				modifiedName = strings.ReplaceAll(modifiedName, "-", "")
+				modifiedName = strings.ReplaceAll(modifiedName, "/", "")
+				modifiedName = strings.ReplaceAll(modifiedName, "|", "")
 				modifiedName = strings.ToUpper(modifiedName)
 
 				if strings.Contains(modifiedName, searchQuery) {
@@ -38,8 +44,8 @@ func GetTorrentsByName() {
 			}
 		}
 		sort.Slice(torrents, func(i, j int) bool { return *torrents[i].ID < *torrents[j].ID })
-		log.Printf("[GetTorrentsByName] Торенти для сзовища %s отримано", key)
-		answer := generateAnswerList(key, torrents)
+		log.Printf("[GetTorrentsByName] Торенти для сховища %s отримано", key)
+		answer := generateAnswerList(key, filteredTorrents)
 		return answer
 	}
 

@@ -6,7 +6,6 @@ import (
 	"github.com/hekmon/transmissionrpc/v2"
 	"kino-cat-torrent-go/helpers"
 	"log"
-	"math"
 	"strconv"
 	"strings"
 )
@@ -48,7 +47,7 @@ func generateAnswerInfo(torrent transmissionrpc.Torrent) string {
 	sb.WriteString(fmt.Sprintf("Торент %s\n/\n", *torrent.Name))
 	sb.WriteString(fmt.Sprintf("Маємо: %.2f Gb", totalSize))
 	sb.WriteString(fmt.Sprintf(" (%.0f%%)\n", done*100))
-	sb.WriteString(fmt.Sprintf("Відвантажено(TODO): %.2f Gb", math.Round(float64(uploadedEver)/1000000.0)/1000.0))
+	//TODO sb.WriteString(fmt.Sprintf("Відвантажено: %.2f Gb", math.Round(float64(uploadedEver)/1000000.0)/1000.0))
 	sb.WriteString(fmt.Sprintf(" (%.0f%%)\n", float64(uploadedEver)/totalSize))
 	sb.WriteString(fmt.Sprintf("Активність: %s\n", torrent.ActivityDate.Format(`02-01-2006 15:04:05`)))
 	if *torrent.Error != 0 {

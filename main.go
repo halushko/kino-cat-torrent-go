@@ -2,18 +2,23 @@ package main
 
 import (
 	"github.com/halushko/kino-cat-core-go/logger_helper"
-	"log"
+	"kino-cat-torrent-go/listeners"
 )
 
 //goland:noinspection ALL
 func main() {
-	logFile := logger_helper.SoftPrepareLogFile()
-	log.SetOutput(logFile)
+	logger_helper.SoftPrepareLogFile()
 
-	//listeners.StartUserMessageListener()
-	//listeners.StartGetHelpCommandListener()
+	listeners.GetAllTorrents()
+	listeners.GetMoreCommands()
+	listeners.ExecutePauseTorrent()
+	listeners.ExecuteResumeTorrent()
+	listeners.GetTorrentInfo()
+	listeners.AskDeleteTorrent()
+	listeners.RemoveJustTorrent()
+	listeners.RemoveWithFiles()
+	listeners.GetTorrentsByName()
+	listeners.GetFilesOfTorrent()
 
-	block := make(chan struct{})
-	defer logger_helper.SoftLogClose(logFile)
-	<-block
+	select {}
 }

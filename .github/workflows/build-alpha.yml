@@ -35,8 +35,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:alpha
             ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:beta-latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:alpha
 
       - name: Complete
         run: |

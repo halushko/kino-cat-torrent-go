@@ -36,8 +36,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/your-image-name:${{ github.ref_name }}
-            ${{ secrets.DOCKER_HUB_USERNAME }}/your-image-name:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:${{ github.ref_name }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:latest
 
       - name: Complete
         run: |

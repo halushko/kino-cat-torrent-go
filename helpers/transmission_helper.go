@@ -40,10 +40,13 @@ func ListenToNatsMessages(queue string, f func(key string, args []string, client
 	processor := func(msg *nats.Msg) {
 		executeForServers(msg, f)
 	}
-	listener := &nats_helper.NatsListener{
-		Handler: processor,
+	listener := &nats_helper.NatsListenerHandler{
+		Function: processor,
 	}
-	nats_helper.StartNatsListener(queue, listener)
+	err := nats_helper.StartNatsListener(queue, listener)
+	if err != nil {
+		log.Printf("[ListenToNatsMessages] Помилка під час прослуховування черги \"%s\" NATS: %v", queue, err)
+	}
 }
 
 func connectToTransmission(msg *nats.Msg) (map[string]*transmissionrpc.Client, CommandNatsMessage) {

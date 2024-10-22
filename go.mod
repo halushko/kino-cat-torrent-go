@@ -3,7 +3,7 @@ module kino-cat-torrent-go
 go 1.23.2
 
 require (
-	github.com/halushko/kino-cat-core-go v0.0.0-20241015102957-096e5635e0b1
+	github.com/halushko/kino-cat-core-go v0.0.0-20241022200643-a3598ab4c343
 	github.com/hekmon/transmissionrpc/v2 v2.0.1
 	github.com/nats-io/nats.go v1.37.0
 )

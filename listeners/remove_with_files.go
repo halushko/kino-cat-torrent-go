@@ -10,9 +10,9 @@ import (
 )
 
 func RemoveWithFiles() {
-	processor := func(key string, args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[RemoveWithFiles] Старт зупинки торенту")
-		strId := args[len(args)-1]
+		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[RemoveWithFiles] ID торента \"%s\" не валідний: %v", strId, err)

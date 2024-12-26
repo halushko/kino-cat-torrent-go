@@ -11,7 +11,7 @@ import (
 )
 
 func AskDeleteTorrent() {
-	processor := func(key string, args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[AskDeleteTorrent] Старт генерування форми підтвердження")
 		strId := args[len(args)-1]
 		id, err := strconv.ParseInt(strId, 10, 64)

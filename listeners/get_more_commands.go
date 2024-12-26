@@ -11,7 +11,7 @@ import (
 )
 
 func GetMoreCommands() {
-	processor := func(key string, args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetMoreCommands] Старт отримання інформації по торенту")
 		id, err := strconv.ParseInt(args[1], 10, 64)
 		if err != nil {
@@ -29,7 +29,7 @@ func GetMoreCommands() {
 		answer := ""
 		if len(torrents) == 1 {
 			log.Printf("[GetMoreCommands] Інформацію про торент \"%d\" отримано", id)
-			answer = generateAnswerMore(torrents[0], args[0], args[1])
+			answer = generateAnswerMore(torrents[0], args[0])
 		} else {
 			log.Printf("[GetMoreCommands] Інформації про торент \"%d\" немає", id)
 			answer = fmt.Sprintf("Нажаль для торента з ID=%d не можна отримати Ім'я", id)
@@ -40,12 +40,12 @@ func GetMoreCommands() {
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_SHOW_COMMANDS", processor)
 }
 
-func generateAnswerMore(torrent transmissionrpc.Torrent, server string, id string) string {
+func generateAnswerMore(torrent transmissionrpc.Torrent, id string) string {
 	var line strings.Builder
 	line.WriteString(*torrent.Name + "\n")
-	line.WriteString(fmt.Sprintf("/pause_%s_%s\n", server, id))
-	line.WriteString(fmt.Sprintf("/resume_%s_%s\n", server, id))
-	line.WriteString(fmt.Sprintf("/info_%s_%s\n", server, id))
-	line.WriteString(fmt.Sprintf("/remove_%s_%s", server, id))
+	line.WriteString(fmt.Sprintf("/pause_%s\n", id))
+	line.WriteString(fmt.Sprintf("/resume_%s\n", id))
+	line.WriteString(fmt.Sprintf("/info_%s\n", id))
+	line.WriteString(fmt.Sprintf("/remove_%s", id))
 	return line.String()
 }

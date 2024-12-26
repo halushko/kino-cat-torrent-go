@@ -11,7 +11,7 @@ import (
 )
 
 func GetTorrentInfo() {
-	processor := func(key string, args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetTorrentInfo] Старт отримання інформації по торенту")
 		strId := args[len(args)-1]
 		id, err := strconv.ParseInt(strId, 10, 64)

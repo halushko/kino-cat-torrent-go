@@ -8,8 +8,6 @@ import (
 	"strconv"
 )
 
-const outputQueue = "TELEGRAM_OUTPUT_TEXT_QUEUE"
-
 func ListenToNatsMessages(queue string, f func(args []string, client *transmissionrpc.Client) string) {
 	processor := func(data []byte) {
 		userId, args, err := nats_helper.ParseNatsBotCommand(data)
@@ -28,21 +26,13 @@ func ListenToNatsMessages(queue string, f func(args []string, client *transmissi
 	}
 }
 
-func SendAnswer(userId int64, message string) {
-	log.Printf("[SendAnswer] Відповідь: %s", message)
-	err := nats_helper.PublishTextMessage(outputQueue, userId, message)
-	if err != nil {
-		log.Printf("[SendAnswer] Помилка: %v", err)
-	}
-}
-
 func executeTorrentCommand(userId int64, args []string, f func(args []string, client *transmissionrpc.Client) string) {
 	if userId == 0 {
 		log.Printf("[ConnectToTransmission] Помилка: ID користувача порожній")
 	}
 
 	client := connectToTransmission()
-	SendAnswer(userId, f(args, client))
+	nats_helper.SendMessageToUser(userId, f(args, client))
 }
 
 func connectToTransmission() *transmissionrpc.Client {

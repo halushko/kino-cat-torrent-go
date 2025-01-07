@@ -14,7 +14,7 @@ import (
 func GetFilesOfTorrent() {
 	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetFilesOfTorrent] Старт відображення файлів")
-		strId := args[len(args)-1]
+		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[GetFilesOfTorrent] ID торента \"%s\" не валідний: %v", strId, err)

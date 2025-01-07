@@ -13,9 +13,9 @@ import (
 func GetMoreCommands() {
 	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetMoreCommands] Старт отримання інформації по торенту")
-		id, err := strconv.ParseInt(args[1], 10, 64)
+		id, err := strconv.ParseInt(args[0], 10, 64)
 		if err != nil {
-			text := fmt.Sprintf("[GetMoreCommands] ID торента \"%s_%s\" не валідний: %v", args[0], args[1], err)
+			text := fmt.Sprintf("[GetMoreCommands] ID торента \"%s\" не валідний: %v", args[0], err)
 			log.Printf(text)
 			return text
 		}

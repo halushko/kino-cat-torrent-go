@@ -13,7 +13,7 @@ import (
 func GetTorrentInfo() {
 	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetTorrentInfo] Старт отримання інформації по торенту")
-		strId := args[len(args)-1]
+		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[GetTorrentInfo] ID торента \"%s\" не валідний: %v", strId, err)

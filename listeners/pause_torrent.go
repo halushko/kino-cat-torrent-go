@@ -12,7 +12,7 @@ import (
 func ExecutePauseTorrent() {
 	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[ExecutePauseTorrent] Старт зупинки торенту")
-		strId := args[len(args)-1]
+		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[ExecutePauseTorrent] ID торента \"%s\" не валідний: %v", strId, err)

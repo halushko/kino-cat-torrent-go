@@ -28,10 +28,11 @@ func GetFilesOfTorrent() {
 			[]int64{id},
 		)
 
-		answer := ""
-		if err != nil {
+		var answer string
+		switch {
+		case err != nil:
 			answer = fmt.Sprintf("Файли торента з ID=%d не знайдено", id)
-		} else {
+		default:
 			answer = getInfoAboutFiles(torrents[0])
 		}
 		return answer

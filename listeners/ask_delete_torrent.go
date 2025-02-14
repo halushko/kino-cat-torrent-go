@@ -27,11 +27,12 @@ func AskDeleteTorrent() {
 			log.Printf(text)
 			return text
 		}
-		answer := ""
-		if len(torrents) == 1 {
+		var answer string
+		switch {
+		case len(torrents) == 1:
 			log.Printf("[AskDeleteTorrent] Інформацію про торент \"%d\" отримано", id)
 			answer = generateAnswerAskDelete(torrents[0], id)
-		} else {
+		default:
 			log.Printf("[AskDeleteTorrent] Інформації про торент \"%d\" немає", id)
 			answer = fmt.Sprintf("Нажаль для торента з ID=%d не можна отримати Ім'я", id)
 		}

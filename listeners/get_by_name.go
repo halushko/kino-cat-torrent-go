@@ -45,10 +45,11 @@ func GetTorrentsByName() {
 		}
 		sort.Slice(torrents, func(i, j int) bool { return *torrents[i].ID < *torrents[j].ID })
 		log.Printf("[GetTorrentsByName] Торенти отримано")
-		answer := ""
-		if len(filteredTorrents) > 0 {
+		var answer string
+		switch {
+		case len(filteredTorrents) > 0:
 			answer = generateAnswerList(filteredTorrents)
-		} else {
+		default:
 			answer = "Нажаль торента з таким ім'ям не знайдено"
 		}
 		return answer

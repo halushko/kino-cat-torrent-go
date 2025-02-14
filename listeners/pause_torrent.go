@@ -22,10 +22,11 @@ func ExecutePauseTorrent() {
 
 		err = client.TorrentStopIDs(context.Background(), []int64{id})
 
-		answer := ""
-		if err != nil {
+		var answer string
+		switch {
+		case err != nil:
 			answer = fmt.Sprintf("Торент з ID=%d не зупинено", id)
-		} else {
+		default:
 			answer = fmt.Sprintf("Торент з ID=%d зупинено", id)
 		}
 		return answer

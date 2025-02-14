@@ -22,10 +22,11 @@ func ExecuteResumeTorrent() {
 
 		err = client.TorrentStartIDs(context.Background(), []int64{id})
 
-		answer := ""
-		if err != nil {
+		var answer string
+		switch {
+		case err != nil:
 			answer = fmt.Sprintf("Торент з ID=%d не поновлено", id)
-		} else {
+		default:
 			answer = fmt.Sprintf("Торент з ID=%d поновлено", id)
 		}
 		return answer

@@ -26,11 +26,12 @@ func GetMoreCommands() {
 			log.Printf(text)
 			return text
 		}
-		answer := ""
-		if len(torrents) == 1 {
+		var answer string
+		switch {
+		case len(torrents) == 1:
 			log.Printf("[GetMoreCommands] Інформацію про торент \"%d\" отримано", id)
 			answer = generateAnswerMore(torrents[0], args[0])
-		} else {
+		default:
 			log.Printf("[GetMoreCommands] Інформації про торент \"%d\" немає", id)
 			answer = fmt.Sprintf("Нажаль для торента з ID=%d не можна отримати Ім'я", id)
 		}

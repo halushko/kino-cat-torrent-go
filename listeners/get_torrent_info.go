@@ -21,15 +21,17 @@ func GetTorrentInfo() {
 			return text
 		}
 
-		answer := ""
 		torrents, err := client.TorrentGet(
 			context.Background(),
 			[]string{"totalSize", "percentDone", "uploadedEver", "activityDate", "name", "error", "errorString", "comment", "dateCreated", "startDate"},
 			[]int64{id},
 		)
-		if err != nil {
+
+		var answer string
+		switch {
+		case err != nil:
 			answer = fmt.Sprintf("Інформацію по торенту з ID=%d не можливо отримати", id)
-		} else {
+		default:
 			answer = generateAnswerInfo(torrents[0])
 		}
 		return answer

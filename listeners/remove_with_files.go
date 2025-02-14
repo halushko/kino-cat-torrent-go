@@ -27,10 +27,11 @@ func RemoveWithFiles() {
 				DeleteLocalData: true,
 			})
 
-		answer := ""
-		if err != nil {
+		var answer string
+		switch {
+		case err != nil:
 			answer = fmt.Sprintf("Торент з ID=%d не видалено", id)
-		} else {
+		default:
 			answer = fmt.Sprintf("Торент з ID=%d видалено, файли видалено з сервера", id)
 		}
 		return answer

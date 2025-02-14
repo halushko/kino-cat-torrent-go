@@ -20,7 +20,7 @@ func GetMoreCommands() {
 			return text
 		}
 
-		torrents, err := client.TorrentGet(context.Background(), []string{"name", "id", "status"}, []int64{id})
+		torrents, err := client.TorrentGet(context.Background(), []string{"name", "id", "status", "downloadDir"}, []int64{id})
 		if err != nil {
 			text := fmt.Sprintf("[GetMoreCommands] Помилка отримання переліку торентов: %v", err)
 			log.Printf(text)
@@ -30,7 +30,7 @@ func GetMoreCommands() {
 		switch {
 		case len(torrents) == 1:
 			log.Printf("[GetMoreCommands] Інформацію про торент \"%d\" отримано", id)
-			log.Printf("[GetMoreCommands] торент \"%v\" отримано", torrents[0])
+			//log.Printf("[GetMoreCommands] торент \"%v\" отримано", torrents[0])
 			answer = generateAnswerMore(torrents[0], args[0])
 		default:
 			log.Printf("[GetMoreCommands] Інформації про торент \"%d\" немає", id)

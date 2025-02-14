@@ -8,7 +8,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func ExecuteBacklogTorrent() {
@@ -40,9 +39,7 @@ func MoveTorrent(args []string, newLocation string, client *transmissionrpc.Clie
 		return text
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 48*time.Hour)
-	defer cancel()
-
+	ctx := context.Background()
 	err = client.TorrentSetLocation(ctx, id, newLocation, true)
 
 	answer := fmt.Sprintf("[MoveTorrent] Почато операцію переміщення торанта ID=\"%d\"", id)

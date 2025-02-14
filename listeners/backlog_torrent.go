@@ -7,6 +7,7 @@ import (
 	"kino-cat-torrent-go/helpers"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -44,13 +45,18 @@ func MoveTorrent(args []string, newLocation string, client *transmissionrpc.Clie
 
 	err = client.TorrentSetLocation(ctx, id, newLocation, true)
 
-	var answer string
+	answer := fmt.Sprintf("[MoveTorrent] Почато операцію переміщення торанта ID=\"%d\"", id)
+
 	switch {
+	case err != nil && (ctx.Err() == context.DeadlineExceeded ||
+		strings.Contains(err.Error(), "context deadline exceeded") ||
+		strings.Contains(err.Error(), "Client.Timeout exceeded while awaiting headers")):
 	case err != nil:
 		answer = fmt.Sprintf("[MoveTorrent] Помилка при зміні локації медіафайлів торента ID=\"%d\": %v", id, err)
+		log.Printf(answer)
 	default:
-		answer = fmt.Sprintf("[MoveTorrent] Почато операцію переміщення торанта ID=\"%d\"", id)
 	}
+
 	log.Printf(answer)
 	return answer
 }

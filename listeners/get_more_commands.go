@@ -48,5 +48,7 @@ func generateAnswerMore(torrent transmissionrpc.Torrent, id string) string {
 	line.WriteString(fmt.Sprintf("/resume_%s\n", id))
 	line.WriteString(fmt.Sprintf("/info_%s\n", id))
 	line.WriteString(fmt.Sprintf("/remove_%s", id))
+	line.WriteString(fmt.Sprintf("/backlog_%s", id))
+	line.WriteString(fmt.Sprintf("/de_backlog_%s", id))
 	return line.String()
 }

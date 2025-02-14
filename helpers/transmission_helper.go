@@ -8,6 +8,9 @@ import (
 	"strconv"
 )
 
+const DownloadDir = "/downloads/complete"
+const BacklogDir = "/downloads/backlog"
+
 func ListenToNatsMessages(queue string, f func(args []string, client *transmissionrpc.Client) string) {
 	processor := func(data []byte) {
 		userId, args, err := nats_helper.ParseNatsBotCommand(data)

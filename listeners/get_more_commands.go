@@ -43,12 +43,21 @@ func GetMoreCommands() {
 
 func generateAnswerMore(torrent transmissionrpc.Torrent, id string) string {
 	var line strings.Builder
+
 	line.WriteString(*torrent.Name + "\n")
-	line.WriteString(fmt.Sprintf("/pause_%s\n", id))
-	line.WriteString(fmt.Sprintf("/resume_%s\n", id))
+
 	line.WriteString(fmt.Sprintf("/info_%s\n", id))
-	line.WriteString(fmt.Sprintf("/remove_%s", id))
-	line.WriteString(fmt.Sprintf("/backlog_%s", id))
-	line.WriteString(fmt.Sprintf("/de_backlog_%s", id))
+	if torrent.Status != nil && *torrent.Status == transmissionrpc.TorrentStatusStopped {
+		line.WriteString(fmt.Sprintf("/resume_%s\n", id))
+	} else {
+		line.WriteString(fmt.Sprintf("/pause_%s\n", id))
+	}
+	line.WriteString(fmt.Sprintf("/remove_%s\n", id))
+	if torrent.DownloadDir != nil && *torrent.DownloadDir == helpers.DownloadDir {
+		line.WriteString(fmt.Sprintf("/backlog_%s\n", id))
+	} else {
+		line.WriteString(fmt.Sprintf("/de_backlog_%s\n", id))
+	}
+
 	return line.String()
 }

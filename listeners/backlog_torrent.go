@@ -14,7 +14,7 @@ func ExecuteBacklogTorrent() {
 	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[ExecuteBacklogTorrent] Старт перенесення торенту у сховище для подивитися пізніше")
 
-		return MoveTorrent(args, "/downloads/backlog", client)
+		return MoveTorrent(args, helpers.BacklogDir, client)
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_BACKLOG", processor)
@@ -24,7 +24,7 @@ func ExecuteDeBacklogTorrent() {
 	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[ExecuteDeBacklogTorrent] Старт перенесення торенту зі сховище для подивитися пізніше")
 
-		return MoveTorrent(args, "/downloads/complete", client)
+		return MoveTorrent(args, helpers.DownloadDir, client)
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_DEBACKLOG", processor)

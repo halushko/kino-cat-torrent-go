@@ -7,6 +7,7 @@ import (
 	"kino-cat-torrent-go/helpers"
 	"log"
 	"strconv"
+	"time"
 )
 
 func ExecuteBacklogTorrent() {
@@ -38,7 +39,10 @@ func MoveTorrent(args []string, newLocation string, client *transmissionrpc.Clie
 		return text
 	}
 
-	err = client.TorrentSetLocation(context.Background(), id, newLocation, true)
+	ctx, cancel := context.WithTimeout(context.Background(), 48*time.Hour)
+	defer cancel()
+
+	err = client.TorrentSetLocation(ctx, id, newLocation, true)
 
 	var answer string
 	switch {

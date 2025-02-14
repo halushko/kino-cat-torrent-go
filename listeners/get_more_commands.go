@@ -53,7 +53,10 @@ func generateAnswerMore(torrent transmissionrpc.Torrent, id string) string {
 		line.WriteString(fmt.Sprintf("/pause_%s\n", id))
 	}
 	line.WriteString(fmt.Sprintf("/remove_%s\n", id))
-	log.Print("[generateAnswerMore] torrent.DownloadDir == " + *torrent.DownloadDir)
+
+	if torrent.DownloadDir != nil {
+		log.Printf("[generateAnswerMore] torrent.DownloadDir == %s", *torrent.DownloadDir)
+	}
 	if torrent.DownloadDir != nil && *torrent.DownloadDir == helpers.DownloadDir {
 		line.WriteString(fmt.Sprintf("/backlog_%s\n", id))
 	} else {

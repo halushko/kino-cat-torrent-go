@@ -12,9 +12,9 @@ import (
 )
 
 func GetFilesOfTorrent() {
-	processor := func(key string, args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetFilesOfTorrent] Старт відображення файлів")
-		strId := args[len(args)-1]
+		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[GetFilesOfTorrent] ID торента \"%s\" не валідний: %v", strId, err)
@@ -28,10 +28,11 @@ func GetFilesOfTorrent() {
 			[]int64{id},
 		)
 
-		answer := ""
-		if err != nil {
+		var answer string
+		switch {
+		case err != nil:
 			answer = fmt.Sprintf("Файли торента з ID=%d не знайдено", id)
-		} else {
+		default:
 			answer = getInfoAboutFiles(torrents[0])
 		}
 		return answer

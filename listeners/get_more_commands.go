@@ -11,26 +11,28 @@ import (
 )
 
 func GetMoreCommands() {
-	processor := func(key string, args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) string {
 		log.Printf("[GetMoreCommands] Старт отримання інформації по торенту")
-		id, err := strconv.ParseInt(args[1], 10, 64)
+		id, err := strconv.ParseInt(args[0], 10, 64)
 		if err != nil {
-			text := fmt.Sprintf("[GetMoreCommands] ID торента \"%s_%s\" не валідний: %v", args[0], args[1], err)
+			text := fmt.Sprintf("[GetMoreCommands] ID торента \"%s\" не валідний: %v", args[0], err)
 			log.Printf(text)
 			return text
 		}
 
-		torrents, err := client.TorrentGet(context.Background(), []string{"name", "id", "status"}, []int64{id})
+		torrents, err := client.TorrentGet(context.Background(), []string{"name", "id", "status", "downloadDir"}, []int64{id})
 		if err != nil {
 			text := fmt.Sprintf("[GetMoreCommands] Помилка отримання переліку торентов: %v", err)
 			log.Printf(text)
 			return text
 		}
-		answer := ""
-		if len(torrents) == 1 {
+		var answer string
+		switch {
+		case len(torrents) == 1:
 			log.Printf("[GetMoreCommands] Інформацію про торент \"%d\" отримано", id)
-			answer = generateAnswerMore(torrents[0], args[0], args[1])
-		} else {
+			//log.Printf("[GetMoreCommands] торент \"%v\" отримано", torrents[0])
+			answer = generateAnswerMore(torrents[0], args[0])
+		default:
 			log.Printf("[GetMoreCommands] Інформації про торент \"%d\" немає", id)
 			answer = fmt.Sprintf("Нажаль для торента з ID=%d не можна отримати Ім'я", id)
 		}
@@ -40,12 +42,22 @@ func GetMoreCommands() {
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_SHOW_COMMANDS", processor)
 }
 
-func generateAnswerMore(torrent transmissionrpc.Torrent, server string, id string) string {
+func generateAnswerMore(torrent transmissionrpc.Torrent, id string) string {
 	var line strings.Builder
 	line.WriteString(*torrent.Name + "\n")
-	line.WriteString(fmt.Sprintf("/pause_%s_%s\n", server, id))
-	line.WriteString(fmt.Sprintf("/resume_%s_%s\n", server, id))
-	line.WriteString(fmt.Sprintf("/info_%s_%s\n", server, id))
-	line.WriteString(fmt.Sprintf("/remove_%s_%s", server, id))
+
+	line.WriteString(fmt.Sprintf("/info_%s\n", id))
+	if torrent.Status != nil && *torrent.Status == transmissionrpc.TorrentStatusStopped {
+		line.WriteString(fmt.Sprintf("/resume_%s\n", id))
+	} else {
+		line.WriteString(fmt.Sprintf("/pause_%s\n", id))
+	}
+	line.WriteString(fmt.Sprintf("/remove_%s\n", id))
+	if torrent.DownloadDir != nil && *torrent.DownloadDir == helpers.DownloadDir {
+		line.WriteString(fmt.Sprintf("/backlog_%s\n", id))
+	} else {
+		line.WriteString(fmt.Sprintf("/de_backlog_%s\n", id))
+	}
+
 	return line.String()
 }

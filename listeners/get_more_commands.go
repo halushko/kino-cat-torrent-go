@@ -30,7 +30,6 @@ func GetMoreCommands() {
 		switch {
 		case len(torrents) == 1:
 			log.Printf("[GetMoreCommands] Інформацію про торент \"%d\" отримано", id)
-			//log.Printf("[GetMoreCommands] торент \"%v\" отримано", torrents[0])
 			answer = generateAnswerMore(torrents[0], args[0])
 		default:
 			log.Printf("[GetMoreCommands] Інформації про торент \"%d\" немає", id)

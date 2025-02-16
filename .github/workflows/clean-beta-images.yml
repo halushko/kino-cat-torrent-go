@@ -28,7 +28,7 @@ jobs:
         run: |
           BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | sed 's/[\/]/-/g')
           echo "SANITIZED_BRANCH_NAME=beta-${BRANCH_NAME}" >> $GITHUB_ENV
-          echo "Branch being merged: beta-${BRANCH_NAME}"
+          echo "Branch being merged: ${BRANCH_NAME}"
 
       - name: Get list of Docker tags to delete
         id: list_tags

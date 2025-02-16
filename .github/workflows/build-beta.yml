@@ -46,7 +46,7 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:beta-${{ env.DOCKER_TAG }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:${{ env.DOCKER_TAG }}
             ${{ secrets.DOCKER_HUB_USERNAME }}/kino-cat-torrent-go:beta-latest
 
       - name: Complete

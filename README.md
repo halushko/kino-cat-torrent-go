@@ -5,6 +5,8 @@
 ## v1.2
 * add common functions
 * refactor
+## v1.3
+* deploy images
 
 # TODO
 * start/pause all

@@ -37,7 +37,7 @@ func generateAnswerList(torrents []transmissionrpc.Torrent) []string {
 		line.WriteString(fmt.Sprintf("%s %s\n", getStatusIcon(torrent), *torrent.Name))
 		line.WriteString(fmt.Sprintf("%s %s\n", getProgressBar(*torrent.PercentDone, 20), getGigabytesLeft(torrent)))
 		line.WriteString(fmt.Sprintf("/more_%d ", id))
-		line.WriteString(fmt.Sprintf("/files_%d\n", id))
+		line.WriteString(fmt.Sprintf("/files_%d", id))
 		result = append(result, line.String())
 	}
 	return result

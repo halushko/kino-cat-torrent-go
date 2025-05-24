@@ -52,20 +52,19 @@ func getInfoAboutFiles(torrent transmissionrpc.Torrent) []string {
 		var sb strings.Builder
 		done := float64(file.BytesCompleted) / float64(file.Length)
 		pb := getProgressBar(done, 10)
-		name := file.Name
-
-		if strings.HasPrefix(name, *torrent.Name+"/") {
-			name = strings.TrimPrefix(name, *torrent.Name+"/")
-		}
-
 		percent := ""
 		if done >= 1 {
 			percent = "✅"
 		} else {
 			percent = fmt.Sprintf("(%.2f Gb)", helpers.Byte2Gb(file.Length-file.BytesCompleted))
 		}
+		name := file.Name
+		if strings.HasPrefix(name, *torrent.Name+"/") {
+			name = strings.TrimPrefix(name, *torrent.Name+"/")
+		}
+
 		sb.WriteString(fmt.Sprintf("%s\n", name))
-		sb.WriteString(fmt.Sprintf("%s %s\n", pb, percent))
+		sb.WriteString(fmt.Sprintf("%s %s", pb, percent))
 		result = append(result, sb.String())
 	}
 	return result

@@ -12,13 +12,13 @@ import (
 )
 
 func GetAllTorrents() {
-	processor := func(args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) []string {
 		log.Printf("[GetAllTorrents] Торенти отримано")
 		torrents, err := client.TorrentGetAll(context.Background())
 		if err != nil {
 			text := fmt.Sprintf("[GetAllTorrents] Помилка отримання переліку торентов: %v", err)
 			log.Printf(text)
-			return text
+			return []string{text}
 		}
 		sort.Slice(torrents, func(i, j int) bool { return *torrents[i].ID < *torrents[j].ID })
 		log.Printf("[GetAllTorrents] Торенти отримано")
@@ -29,16 +29,18 @@ func GetAllTorrents() {
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_LIST", processor)
 }
 
-func generateAnswerList(torrents []transmissionrpc.Torrent) string {
-	var line strings.Builder
+func generateAnswerList(torrents []transmissionrpc.Torrent) []string {
+	result := make([]string, 0)
 	for _, torrent := range torrents {
+		var line strings.Builder
 		id := *torrent.ID
 		line.WriteString(fmt.Sprintf("%s %s\n", getStatusIcon(torrent), *torrent.Name))
 		line.WriteString(fmt.Sprintf("%s %s\n", getProgressBar(*torrent.PercentDone, 20), getGigabytesLeft(torrent)))
 		line.WriteString(fmt.Sprintf("/more_%d ", id))
 		line.WriteString(fmt.Sprintf("/files_%d\n", id))
+		result = append(result, line.String())
 	}
-	return line.String()
+	return result
 }
 
 func getProgressBar(percentDone float64, blocks int) string {

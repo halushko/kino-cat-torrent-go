@@ -10,14 +10,14 @@ import (
 )
 
 func ExecutePauseTorrent() {
-	processor := func(args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) []string {
 		log.Printf("[ExecutePauseTorrent] Старт зупинки торенту")
 		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[ExecutePauseTorrent] ID торента \"%s\" не валідний: %v", strId, err)
 			log.Printf(text)
-			return text
+			return []string{text}
 		}
 
 		err = client.TorrentStopIDs(context.Background(), []int64{id})
@@ -29,7 +29,7 @@ func ExecutePauseTorrent() {
 		default:
 			answer = fmt.Sprintf("Торент з ID=%d зупинено", id)
 		}
-		return answer
+		return []string{answer}
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_PAUSE_TORRENT", processor)

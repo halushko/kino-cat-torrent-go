@@ -11,20 +11,20 @@ import (
 )
 
 func ExecuteBacklogTorrent() {
-	processor := func(args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) []string {
 		log.Printf("[ExecuteBacklogTorrent] Старт перенесення торенту у сховище для подивитися пізніше")
 
-		return MoveTorrent(args, helpers.BacklogDir, client)
+		return []string{MoveTorrent(args, helpers.BacklogDir, client)}
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_BACKLOG", processor)
 }
 
 func ExecuteDeBacklogTorrent() {
-	processor := func(args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) []string {
 		log.Printf("[ExecuteDeBacklogTorrent] Старт перенесення торенту зі сховище для подивитися пізніше")
 
-		return MoveTorrent(args, helpers.DownloadDir, client)
+		return []string{MoveTorrent(args, helpers.DownloadDir, client)}
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_DEBACKLOG", processor)

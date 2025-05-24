@@ -11,49 +11,48 @@ import (
 )
 
 func GetTorrentsByName() {
-	processor := func(args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) []string {
 		log.Printf("[GetTorrentsByName] Торенти отримано")
 		torrents, err := client.TorrentGetAll(context.Background())
 		if err != nil {
 			text := fmt.Sprintf("[GetTorrentsByName] Помилка отримання переліку торентов: %v", err)
 			log.Printf(text)
-			return text
+			return []string{text}
 		}
-		filteredTorrents := make([]transmissionrpc.Torrent, 0) // Создаем список для отфильтрованных торрентов
+		filteredTorrents := make([]transmissionrpc.Torrent, 0)
 
-		searchQuery := strings.Join(args, "")
-		searchQuery = strings.ReplaceAll(searchQuery, " ", "")
-		searchQuery = strings.ReplaceAll(searchQuery, "_", "")
-		searchQuery = strings.ReplaceAll(searchQuery, "-", "")
-		searchQuery = strings.ReplaceAll(searchQuery, "/", "")
-		searchQuery = strings.ReplaceAll(searchQuery, "|", "")
-		searchQuery = strings.ToUpper(searchQuery)
+		searchQuery := prepareText(strings.Join(args, ""))
 
 		for i := 0; i < len(torrents); i++ {
 			if torrents[i].Name != nil {
-				modifiedName := strings.ReplaceAll(*torrents[i].Name, " ", "")
-				modifiedName = strings.ReplaceAll(modifiedName, "_", "")
-				modifiedName = strings.ReplaceAll(modifiedName, "-", "")
-				modifiedName = strings.ReplaceAll(modifiedName, "/", "")
-				modifiedName = strings.ReplaceAll(modifiedName, "|", "")
-				modifiedName = strings.ToUpper(modifiedName)
+				modifiedName := prepareText(strings.ReplaceAll(*torrents[i].Name, " ", ""))
 
 				if strings.Contains(modifiedName, searchQuery) {
-					filteredTorrents = append(filteredTorrents, torrents[i]) // Добавляем торрент в фильтрованный список
+					filteredTorrents = append(filteredTorrents, torrents[i])
 				}
 			}
 		}
 		sort.Slice(torrents, func(i, j int) bool { return *torrents[i].ID < *torrents[j].ID })
 		log.Printf("[GetTorrentsByName] Торенти отримано")
-		var answer string
+		var answer []string
 		switch {
 		case len(filteredTorrents) > 0:
 			answer = generateAnswerList(filteredTorrents)
 		default:
-			answer = "Нажаль торента з таким ім'ям не знайдено"
+			answer = []string{"Нажаль торента з таким ім'ям не знайдено"}
 		}
 		return answer
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_SEARCH_BY_NAME", processor)
+}
+
+func prepareText(text string) string {
+	text = strings.ReplaceAll(text, " ", "")
+	text = strings.ReplaceAll(text, "_", "")
+	text = strings.ReplaceAll(text, "-", "")
+	text = strings.ReplaceAll(text, "/", "")
+	text = strings.ReplaceAll(text, "|", "")
+	text = strings.ToUpper(text)
+	return text
 }

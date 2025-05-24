@@ -12,14 +12,14 @@ import (
 )
 
 func GetFilesOfTorrent() {
-	processor := func(args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) []string {
 		log.Printf("[GetFilesOfTorrent] Старт відображення файлів")
 		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[GetFilesOfTorrent] ID торента \"%s\" не валідний: %v", strId, err)
 			log.Printf(text)
-			return text
+			return []string{text}
 		}
 
 		torrents, err := client.TorrentGet(
@@ -28,10 +28,10 @@ func GetFilesOfTorrent() {
 			[]int64{id},
 		)
 
-		var answer string
+		var answer []string
 		switch {
 		case err != nil:
-			answer = fmt.Sprintf("Файли торента з ID=%d не знайдено", id)
+			answer = []string{fmt.Sprintf("Файли торента з ID=%d не знайдено", id)}
 		default:
 			answer = getInfoAboutFiles(torrents[0])
 		}
@@ -41,14 +41,15 @@ func GetFilesOfTorrent() {
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_LIST_FILES", processor)
 }
 
-func getInfoAboutFiles(torrent transmissionrpc.Torrent) string {
+func getInfoAboutFiles(torrent transmissionrpc.Torrent) []string {
 	files := torrent.Files
 	sort.Slice(files, func(i, j int) bool { return files[i].Name < files[j].Name })
 
-	var sb strings.Builder
-	sb.WriteString(fmt.Sprintf("%s\n/\n", *torrent.Name))
+	result := make([]string, 0)
 
+	result = append(result, fmt.Sprintf("%s\n/\n", *torrent.Name))
 	for _, file := range files {
+		var sb strings.Builder
 		done := float64(file.BytesCompleted) / float64(file.Length)
 		pb := getProgressBar(done, 10)
 		name := file.Name
@@ -65,6 +66,7 @@ func getInfoAboutFiles(torrent transmissionrpc.Torrent) string {
 		}
 		sb.WriteString(fmt.Sprintf("%s\n", name))
 		sb.WriteString(fmt.Sprintf("%s (%s)\n", pb, percent))
+		result = append(result, sb.String())
 	}
-	return sb.String()
+	return result
 }

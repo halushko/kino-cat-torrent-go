@@ -11,14 +11,14 @@ import (
 const DownloadDir = "/downloads/complete"
 const BacklogDir = "/downloads/backlog"
 
-func ListenToNatsMessages(queue string, f func(args []string, client *transmissionrpc.Client) string) {
+func ListenToNatsMessages(queue string, f func(args []string, client *transmissionrpc.Client) []string) {
 	processor := func(data []byte) {
 		userId, args, err := nats_helper.ParseNatsBotCommand(data)
 		if err != nil {
 			log.Printf("[ListenToNatsMessages] Помилка під час прослуховування черги \"%s\" NATS: %v", queue, err)
 			return
 		}
-		executeTorrentCommand(userId, args, f)
+		executeUserCommand(userId, args, f)
 	}
 	listener := &nats_helper.NatsListenerHandler{
 		Function: processor,
@@ -29,13 +29,29 @@ func ListenToNatsMessages(queue string, f func(args []string, client *transmissi
 	}
 }
 
-func executeTorrentCommand(userId int64, args []string, f func(args []string, client *transmissionrpc.Client) string) {
+func executeUserCommand(userId int64, args []string, f func(args []string, client *transmissionrpc.Client) []string) {
 	if userId == 0 {
 		log.Printf("[ConnectToTransmission] Помилка: ID користувача порожній")
 	}
 
 	client := connectToTransmission()
-	nats_helper.SendMessageToUser(userId, f(args, client))
+	result := f(args, client)
+
+	answer := ""
+	sendLast := false
+	for i := 0; i < len(result); i++ {
+		if len(answer)+len(result[i]) > 4000 {
+			nats_helper.SendMessageToUser(userId, answer)
+			answer = ""
+			sendLast = false
+		} else {
+			answer = answer + "\n" + result[i]
+			sendLast = true
+		}
+	}
+	if sendLast {
+		nats_helper.SendMessageToUser(userId, answer)
+	}
 }
 
 func connectToTransmission() *transmissionrpc.Client {

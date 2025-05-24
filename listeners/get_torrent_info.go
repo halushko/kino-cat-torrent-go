@@ -11,14 +11,14 @@ import (
 )
 
 func GetTorrentInfo() {
-	processor := func(args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) []string {
 		log.Printf("[GetTorrentInfo] Старт отримання інформації по торенту")
 		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[GetTorrentInfo] ID торента \"%s\" не валідний: %v", strId, err)
 			log.Printf(text)
-			return text
+			return []string{text}
 		}
 
 		torrents, err := client.TorrentGet(
@@ -34,7 +34,7 @@ func GetTorrentInfo() {
 		default:
 			answer = generateAnswerInfo(torrents[0])
 		}
-		return answer
+		return []string{answer}
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_INFO", processor)

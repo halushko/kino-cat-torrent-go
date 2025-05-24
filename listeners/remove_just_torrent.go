@@ -10,14 +10,14 @@ import (
 )
 
 func RemoveJustTorrent() {
-	processor := func(args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) []string {
 		log.Printf("[RemoveJustTorrent] Старт зупинки торенту")
 		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[RemoveJustTorrent] ID торента \"%s\" не валідний: %v", strId, err)
 			log.Printf(text)
-			return text
+			return []string{text}
 		}
 
 		err = client.TorrentRemove(
@@ -34,7 +34,7 @@ func RemoveJustTorrent() {
 		default:
 			answer = fmt.Sprintf("Торент з ID=%d видалено, файли залишилися на сервері", id)
 		}
-		return answer
+		return []string{answer}
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_DELETE_ONLY_TORRENT", processor)

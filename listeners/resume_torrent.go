@@ -10,14 +10,14 @@ import (
 )
 
 func ExecuteResumeTorrent() {
-	processor := func(args []string, client *transmissionrpc.Client) string {
+	processor := func(args []string, client *transmissionrpc.Client) []string {
 		log.Printf("[ExecuteResumeTorrent] Старт поновлення торенту")
 		strId := args[0]
 		id, err := strconv.ParseInt(strId, 10, 64)
 		if err != nil {
 			text := fmt.Sprintf("[ExecuteResumeTorrent] ID торента \"%s\" не валідний: %v", strId, err)
 			log.Printf(text)
-			return text
+			return []string{text}
 		}
 
 		err = client.TorrentStartIDs(context.Background(), []int64{id})
@@ -29,7 +29,7 @@ func ExecuteResumeTorrent() {
 		default:
 			answer = fmt.Sprintf("Торент з ID=%d поновлено", id)
 		}
-		return answer
+		return []string{answer}
 	}
 
 	helpers.ListenToNatsMessages("EXECUTE_TORRENT_COMMAND_RESUME_TORRENT", processor)

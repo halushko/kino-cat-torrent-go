@@ -47,7 +47,7 @@ func getInfoAboutFiles(torrent transmissionrpc.Torrent) []string {
 
 	result := make([]string, 0)
 
-	result = append(result, fmt.Sprintf("%s\n/\n", *torrent.Name))
+	result = append(result, fmt.Sprintf("%s\n/", *torrent.Name))
 	for _, file := range files {
 		var sb strings.Builder
 		done := float64(file.BytesCompleted) / float64(file.Length)

@@ -66,7 +66,7 @@ func getProgressBar(percentDone float64, blocks int) string {
 func getGigabytesLeft(torrent transmissionrpc.Torrent) string {
 	done := *torrent.PercentDone
 	if done == 1.0 {
-		return " (заверш)"
+		return " ✅"
 	}
 
 	percentDone := math.Round(done * 100)

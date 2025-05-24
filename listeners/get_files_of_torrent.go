@@ -62,7 +62,7 @@ func getInfoAboutFiles(torrent transmissionrpc.Torrent) []string {
 		if done >= 1 {
 			percent = "заверш"
 		} else {
-			percent = fmt.Sprintf("%.2f Gb", float64(file.Length-file.BytesCompleted)/1024.0/1024.0/1024.0)
+			percent = fmt.Sprintf("%.2f Gb", helpers.Byte2Gb(file.Length-file.BytesCompleted))
 		}
 		sb.WriteString(fmt.Sprintf("%s\n", name))
 		sb.WriteString(fmt.Sprintf("%s (%s)\n", pb, percent))
